@@ -1,0 +1,15 @@
+[
+    {
+        "titulo": "Breaking Bad",
+        "genero": "Drama",
+        "ano_lancamento": 2008,
+        "temporadas": 5
+    },
+
+    {
+        "titulo": "Dark",
+        "genero": "Ficção científica",
+        "ano_lancamento": 2017,
+        "temporadas": 3
+    }
+]
