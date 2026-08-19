@@ -6,7 +6,10 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .schemas import Serie
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+SERIES_FILE = BASE_DIR / "series.json"
 
 @csrf_exempt
 def criar_serie(request):
@@ -33,12 +36,12 @@ def criar_serie(request):
         )
 
     try:
-        with open("series.json", "r", encoding="utf-8") as arquivo:
+        with open(SERIES_FILE, "r", encoding="utf-8") as arquivo:
             series = json.load(arquivo)
 
         series.append(serie.model_dump())
 
-        with open("series.json", "w", encoding="utf-8") as arquivo:
+        with open(SERIES_FILE, "w", encoding="utf-8") as arquivo:
             json.dump(series, arquivo, ensure_ascii=False, indent=4)
 
     except (FileNotFoundError, json.JSONDecodeError):
@@ -53,5 +56,36 @@ def criar_serie(request):
             "serie": serie.model_dump()
         },
         status=201
+    )
+
+
+def listar_series(request):
+    if request.method != "GET":
+        return JsonResponse(
+            {"erro": "Método HTTP não permitido."},
+            status=405
+        )
+
+    try:
+        with open(SERIES_FILE, "r", encoding="utf-8") as arquivo:
+            series = json.load(arquivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return JsonResponse(
+            {'erro': 'não foi possível acessar o arquivo de séries.'},
+        )
+    return JsonResponse(series, safe=False, status=200)
+
+
+@csrf_exempt
+def series(request):
+    if request.method == 'GET':
+        return listar_series(request)
+
+    if request.method == 'POST':
+        return criar_serie(request)
+
+    return JsonResponse(
+        {'erro': 'Método HTTP não permitido.'},
+        status=405
     )
 # Create your views here.

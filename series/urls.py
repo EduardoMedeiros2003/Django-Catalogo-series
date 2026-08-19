@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import criar_serie
+from .views import series
 
 urlpatterns = [
-    path('series', criar_serie)
+    path('series', series)
 ]
