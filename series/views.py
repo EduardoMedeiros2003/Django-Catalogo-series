@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .schemas import Serie
 from pathlib import Path
+from .database import buscar_por_titulo
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SERIES_FILE = BASE_DIR / "series.json"
@@ -89,3 +90,18 @@ def series(request):
         status=405
     )
 # Create your views here.
+def buscar_serie(request, titulo):
+    serie = buscar_por_titulo(titulo)
+
+    if serie is None:
+        return JsonResponse(
+            {"detail": "Série não encontrada."},
+            status=404
+        )
+
+    return JsonResponse({
+        "titulo": serie[0],
+        "genero": serie[1],
+        "ano_lancamento": serie[2],
+        "temporadas": serie[3]
+    })
